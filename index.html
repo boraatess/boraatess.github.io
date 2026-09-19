@@ -35,7 +35,7 @@
     </nav>
 
     <header class="hero container">
-        <div class="subtitle animate-in" data-i18n="hero_badge">6 YILLIK TECRÜBE</div>
+        <div class="subtitle animate-in" data-i18n="hero_badge"></div>
         <h1 class="animate-in" style="animation-delay: 0.1s;" data-i18n="hero_title">Geleceğin Mobil Deneyimlerini <span
                 style="color: var(--accent-blue);">Swift</span> ile İnşa Ediyorum.</h1>
         <p class="animate-in" style="animation-delay: 0.2s;" data-i18n="hero_desc">Senior iOS Developer olarak,
@@ -150,14 +150,14 @@
                 <div
                     style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
                     <div>
-                        <h3 style="font-size: 1.5rem;" data-i18n="exp_pazarama_title">Mobile App Developer</h3>
-                        <p style="color: var(--accent-blue); font-weight: 600;" data-i18n="exp_pazarama_comp">Freelance
+                        <h3 style="font-size: 1.5rem;" data-i18n="exp_freelance_title">Mobile App Developer</h3>
+                        <p style="color: var(--accent-blue); font-weight: 600;" data-i18n="exp_freelance_comp">Freelance
                         </p>
                     </div>
                     <span style="color: var(--text-secondary); font-size: 0.9rem;" data-i18n="exp_freelance_date">Eylül
                         2019 — Halen</span>
                 </div>
-                <p style="color: var(--text-secondary);" data-i18n="exp_pazarama_desc">iOS/Android platformlarında mobil
+                <p style="color: var(--text-secondary);" data-i18n="exp_freelance_desc">iOS/Android platformlarında mobil
                     uygulamalar geliştirme</p>
             </div>
 
@@ -171,7 +171,7 @@
                         </p>
                     </div>
                     <span style="color: var(--text-secondary); font-size: 0.9rem;"
-                        data-i18n="exp_freelance_date">Haziran 2023 - Mayıs 2024</span>
+                        data-i18n="exp_pazarama_date">Haziran 2023 - Mayıs 2024</span>
                 </div>
                 <p style="color: var(--text-secondary);" data-i18n="exp_pazarama_desc">Maximum Mobil ve Maximum İşyerim
                     uygulamalarının geliştirilmesi. SwiftUI, UIKit, MVVM ve SnapKit kullanımı.</p>
@@ -366,13 +366,45 @@
     <script type="module">
         import translations from './translations.js';
 
+        // Deneyim hesaplama (2020 Ocak başlangıç)
+        const startDate = new Date(2020, 0, 1);
+        const currentDate = new Date();
+        const diffMonths = (currentDate.getFullYear() - startDate.getFullYear()) * 12 + (currentDate.getMonth() - startDate.getMonth());
+        const experienceYears = Math.floor(diffMonths / 12);
+        const experienceMonths = diffMonths % 12;
+
         // Dil Değiştirme Fonksiyonu
         window.changeLanguage = (lang) => {
             const elements = document.querySelectorAll('[data-i18n]');
             elements.forEach(el => {
                 const key = el.getAttribute('data-i18n');
                 if (translations[lang][key]) {
-                    el.innerHTML = translations[lang][key];
+                    let translatedText = translations[lang][key];
+                    
+                    if (key === 'hero_badge') {
+                        // Badge için özel daktilo (yazı yazma) animasyonu
+                        translatedText = translatedText.replace('{years}', experienceYears).replace('{months}', experienceMonths);
+                        el.innerHTML = '';
+                        let i = 0;
+                        clearInterval(el.typingInterval);
+                        el.typingInterval = setInterval(() => {
+                            if (i < translatedText.length) {
+                                el.innerHTML += translatedText.charAt(i);
+                                i++;
+                            } else {
+                                clearInterval(el.typingInterval);
+                            }
+                        }, 50); // Her bir harf için 50ms gecikme
+                    } else {
+                        // Diğer alanlardaki değişkenleri normal yerleştir
+                        if (translatedText.includes('{years}')) {
+                            translatedText = translatedText.replace('{years}', experienceYears);
+                        }
+                        if (translatedText.includes('{months}')) {
+                            translatedText = translatedText.replace('{months}', experienceMonths);
+                        }
+                        el.innerHTML = translatedText;
+                    }
                 }
             });
 
